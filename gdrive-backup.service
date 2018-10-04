@@ -1,0 +1,10 @@
+[Unit]
+Description=Google Drive Backup
+
+[Service]
+Type=simple
+User=USERNAME
+ExecStart=/path/to/gdrive-backup/backup.py
+
+[Install]
+WantedBy=multi-user.target

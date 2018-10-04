@@ -1,3 +1,5 @@
+#!/home/samuel/anaconda3/bin/python
+
 import os
 import json
 import shutil
@@ -7,9 +9,12 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
 
+cred_path = "/home/samuel/Programming_Projects/gdrive-backup/credentials.txt"
+config_path = "/home/samuel/Programming_Projects/gdrive-backup/config.json"
+
 #----Authenticate with Google----
 gauth = GoogleAuth()
-gauth.LoadCredentialsFile("credentials.txt")
+gauth.LoadCredentialsFile(cred_path)
 
 if gauth.credentials is None:
     # Authenticate if they're not there
@@ -22,7 +27,7 @@ else:
     gauth.Authorize()
 
 # Save the current credentials to a file
-gauth.SaveCredentialsFile("credentials.txt")
+gauth.SaveCredentialsFile(cred_path)
 
 drive = GoogleDrive(gauth)
 
@@ -52,7 +57,7 @@ hour = today.hour
 minute = today.minute
 second = today.second
 
-config = open("config.json", "r")
+config = open(config_path, "r")
 config_json = json.load(config)
 backup_location = config_json["location"]
 folder_name = config_json["folder_name"]
