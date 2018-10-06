@@ -2,12 +2,12 @@
 
 In general this is a simple script for locally backing up and compressing Google Drive folders. Specifically, this was created as a tool for the Factom community to allow members to automatically backup the Factom Governance documents. Distributed backups are a protection against single points of failure and malice. 
 
-##Version
+## Version
 v0.1
 
-##Getting Started
+## Getting Started
 
-###Preqrequisites
+### Preqrequisites
 
 * Python 3.0+
 * Pydrive
@@ -15,7 +15,7 @@ v0.1
 * Access to Google Drive account where files are stored
 
 
-###Set up
+### Set up
 Install pydrive:
 
 `pip install pydrive`
@@ -36,14 +36,14 @@ Set up `config.json`.
 1. Set "location" to the desired path for where the backup file should go.
 2. Set "folder_name" to the name of the Google Drive folder to download.
 
-Obtain Google OAuth 2.0 credentials by visting [https://console.developers.google.com/] signed into the Google account you will use. Create credentials and download the "client_secrets.json" file to the same location that you store your `config.json` file. 
+Obtain Google OAuth 2.0 credentials by visting https://console.developers.google.com/ signed into the Google account you will use. Create credentials and download the "client_secrets.json" file to the same location that you store your `config.json` file. 
 
-#Running
+# Running
 The first time the program is run it will open a webpage and ask you to sign into your Google account. When you authorize the program's access by signing into an account it will then download the `credentials.txt` file which you should place in the same location as the `config.json` and `client_secrets.txt` files. 
 
 The program can be run manually by `python backup.py` or `systemctl start gdrive-backup.service`.
 
-###Contact
+### Contact
 
 Contact Samuel Vanderwaal for questions.
 
