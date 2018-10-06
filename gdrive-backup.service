@@ -3,8 +3,8 @@ Description=Google Drive Backup
 
 [Service]
 Type=simple
-User=USERNAME
-ExecStart=/path/to/gdrive-backup/backup.py
+User=samuel
+ExecStart=/path/to/gdrive-backup/backup.py /path/to/config and credential files/
 
 [Install]
 WantedBy=multi-user.target

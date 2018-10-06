@@ -3,14 +3,16 @@
 import os
 import json
 import shutil
+import sys
 from datetime import datetime
 from pydrive.files import FileNotDownloadableError
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
+dir_path = sys.argv[1]
 
-cred_path = "/home/samuel/Programming_Projects/gdrive-backup/credentials.txt"
-config_path = "/home/samuel/Programming_Projects/gdrive-backup/config.json"
+cred_path = os.path.join(dir_path, "credentials.txt")
+config_path = os.path.join(dir_path, "config.json")
 
 #----Authenticate with Google----
 gauth = GoogleAuth()

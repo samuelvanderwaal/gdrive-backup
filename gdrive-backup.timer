@@ -2,7 +2,7 @@
 Description=Run Google Drive backup daily
 
 [Timer]
-OnCalendar=daily
+OnCalendar=weekly
 Persistent=true
 
 [Install]
