@@ -5,14 +5,17 @@ import json
 import shutil
 import sys
 from datetime import datetime
+from pathlib import Path
 from pydrive.files import FileNotDownloadableError
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
-dir_path = sys.argv[1]
+# Script receives path to directory containing
+# credentials and configuration files 
+dir_path = Path(sys.argv[1])
 
-cred_path = os.path.join(dir_path, "credentials.txt")
-config_path = os.path.join(dir_path, "config.json")
+cred_path = dir_path / "credentials.txt"
+config_path = dir_path / "config.json"
 
 #----Authenticate with Google----
 gauth = GoogleAuth()
@@ -61,11 +64,11 @@ second = today.second
 
 config = open(config_path, "r")
 config_json = json.load(config)
-backup_location = config_json["location"]
+backup_location = Path(config_json["location"])
 folder_name = config_json["folder_name"]
 date_extension = "-{}{}{}-{}{}{}".format(year, month, day, hour, minute, second)
 folder = folder_name + date_extension
-save_path = os.path.join(backup_location, folder_name + date_extension)
+save_path = backup_location / folder
 os.makedirs(save_path)
 
 
@@ -78,32 +81,37 @@ def ListFolder(parent, base_path, folder):
         file_path = ""
         save_path = base_path
         download_mimetype = None
+
+        # Handle poorly named files
+        name = f["title"].replace("/", "_")
         
         if f['mimeType'] in mimetypes:
             download_mimetype = mimetypes[f['mimeType']][0]
             extension = mimetypes[f['mimeType']][1]
-            name = f['title'] + extension
-            file_path = os.path.join(save_path, name)
+            name = name + extension
 
         elif f['mimeType']=='application/vnd.google-apps.folder':
-            save_path = os.path.join(save_path, f['title'])
+            save_path = save_path / f['title']
             os.makedirs(save_path)
             print("Type: folder")
             ListFolder(f['id'], save_path, folder)
             
-        else:
-            name = f['title']
-            file_path = os.path.join(save_path, name)
 
+        file_path = save_path / name
         print("Save Path: {}".format(save_path))
         print("File Path: {}".format(file_path))
 
         try:
             f.GetContentFile(file_path, mimetype=download_mimetype)
         except FileNotDownloadableError:
-            print("Errror on file {} {} {}".format(
-                f['title'], f['id'], f['mimeType']))
+            if f['mimeType'] != "application/vnd.google-apps.folder":
+                print("Errror on file {} {} {}".format(
+                    f['title'], f['id'], f['mimeType']))
+                sys.exit(0)
             continue
+        except FileNotFoundError:
+            print("Error on: \nSave path: {}\nFile path: {}".format(save_path, file_path))
+            sys.exit(0)
 
 file_list = drive.ListFile(
     {'q': "'root' in parents and trashed=false"}
@@ -115,5 +123,8 @@ for f in file_list:
 
 
 # Create compressed archive and delete original directory
+print("Creating zip archive. . .")
 shutil.make_archive(save_path, 'zip', save_path)
+print("Cleaning up. . .")
 shutil.rmtree(save_path)
+print("Done!")
