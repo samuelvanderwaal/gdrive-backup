@@ -15,7 +15,7 @@ v0.1
 * Access to Google Drive account where files are stored
 
 
-### Set up
+### Setup
 Install pydrive:
 
 `pip install pydrive`

@@ -39,18 +39,18 @@ drive = GoogleDrive(gauth)
 #----Mimetypes Dictionary for Converting Google Files----
 mimetypes = {
      # Drive Document files as MS Word files.
-    'application/vnd.google-apps.document': 
-    ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+    "application/vnd.google-apps.document": 
+    ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", 
     ".docx"],
     # Drive Sheets files as MS Excel files.
-    'application/vnd.google-apps.spreadsheet': 
-    ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    "application/vnd.google-apps.spreadsheet": 
+    ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ".xlsx"],
     # Drive Presentation files as MS Powerpoint
-    'application/vnd.google-apps.presentation':
-    ['application/vnd.ms-powerpoint', ".ppt"], 
+    "application/vnd.google-apps.presentation":
+    ["application/vnd.ms-powerpoint", ".ppt"], 
     # Drive Form files as PDFs
-    'application/vnd.google-apps.form': 'application/pdf'
+    "application/vnd.google-apps.form": ["application/pdf", ".pdf"]
 }
 
 #----Date and Configuration Values-----
@@ -104,13 +104,15 @@ def ListFolder(parent, base_path, folder):
         try:
             f.GetContentFile(file_path, mimetype=download_mimetype)
         except FileNotDownloadableError:
-            if f['mimeType'] != "application/vnd.google-apps.folder":
-                print("Errror on file {} {} {}".format(
+            if f['mimeType'] == "application/vnd.google-apps.form":
+                print("Skipping Google Form: {}".format(f['title']))
+            elif  f['mimeType'] != "application/vnd.google-apps.folder":
+                print("FileNotDownloadableError on file {} {} {}".format(
                     f['title'], f['id'], f['mimeType']))
                 sys.exit(0)
             continue
         except FileNotFoundError:
-            print("Error on: \nSave path: {}\nFile path: {}".format(save_path, file_path))
+            print("File not found: \nSave path: {}\nFile path: {}".format(save_path, file_path))
             sys.exit(0)
 
 file_list = drive.ListFile(
