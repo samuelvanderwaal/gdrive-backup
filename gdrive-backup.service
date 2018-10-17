@@ -3,7 +3,7 @@ Description=Google Drive Backup
 
 [Service]
 Type=simple
-User=samuel
+User=USERNAME
 ExecStart=/path/to/gdrive-backup/backup.py /path/to/config and credential files/
 
 [Install]

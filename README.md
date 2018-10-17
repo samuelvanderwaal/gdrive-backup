@@ -28,8 +28,8 @@ Set up systemd service and timer.
     * Replace "USERNAME" with your system's username to run the program under
     * Replace "/path/to/gdrive-backup/backup.py" with the correct path to the Python script file
     * Replace "/path/to/config and credential files/" with the path to where you store the configuration JSON file and where you will store the GAuth credential files. 
-    * Replace `OnCalendar=daily` in `gdrive-backup.timer` with your preferred frequency for backups: e.g. `daily` or `monthly`. For more information on systemd and systemd timers see: https://wiki.archlinux.org/index.php/systemd. 
-3. Run `systemctl enable gdrive-backup.timer` and `systemctl start gdrive-backup.timer`. 
+    * Replace `OnCalendar=weekly` in `gdrive-backup.timer` with your preferred frequency for backups: e.g. `daily` or `monthly`. For more information on systemd and systemd timers see: https://wiki.archlinux.org/index.php/systemd. 
+3. Add both files to your desired location for systemd files on your system. Run `systemctl enable gdrive-backup.timer` and `systemctl start gdrive-backup.timer`. 
 
 Set up `config.json`.
 
