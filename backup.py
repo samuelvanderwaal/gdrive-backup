@@ -19,20 +19,23 @@ config_path = dir_path / "config.json"
 
 #----Authenticate with Google----
 gauth = GoogleAuth()
-gauth.LoadCredentialsFile(cred_path)
+
+if os.path.isfile(cred_path) and os.path.isfile(config_path):
+    gauth.LoadCredentialsFile(cred_path)
+else:
+    print("Missing config files!")
 
 if gauth.credentials is None:
     # Authenticate if they're not there
     gauth.LocalWebserverAuth()
+    # Save the current credentials to a file
+    gauth.SaveCredentialsFile(cred_path)
 elif gauth.access_token_expired:
     # Refresh them if expired
     gauth.Refresh()
 else:
     # Initialize the saved creds
     gauth.Authorize()
-
-# Save the current credentials to a file
-gauth.SaveCredentialsFile(cred_path)
 
 drive = GoogleDrive(gauth)
 
@@ -66,10 +69,12 @@ config = open(config_path, "r")
 config_json = json.load(config)
 backup_location = Path(config_json["location"])
 folder_name = config_json["folder_name"]
-date_extension = "-{}{}{}-{}{}{}".format(year, month, day, hour, minute, second)
+date_extension = f"-{year}-{month:02d}-{day:02d}T{hour:02d}-{minute:02d}"
 folder = folder_name + date_extension
 save_path = backup_location / folder
 os.makedirs(save_path)
+
+failed_files = []
 
 
 def ListFolder(parent, base_path, folder):
@@ -106,6 +111,7 @@ def ListFolder(parent, base_path, folder):
         except FileNotDownloadableError:
             if f['mimeType'] == "application/vnd.google-apps.form":
                 print("Skipping Google Form: {}".format(f['title']))
+                failed_files.append(f["title"])
             elif  f['mimeType'] != "application/vnd.google-apps.folder":
                 print("FileNotDownloadableError on file {} {} {}".format(
                     f['title'], f['id'], f['mimeType']))
@@ -113,15 +119,25 @@ def ListFolder(parent, base_path, folder):
             continue
         except FileNotFoundError:
             print("File not found: \nSave path: {}\nFile path: {}".format(save_path, file_path))
-            sys.exit(0)
+            continue
+        except pydrive.files.ApiRequestError:
+            print("Cannot download file: API RequestError")
+            failed_files.append(f["title"])
+            continue
 
 file_list = drive.ListFile(
     {'q': "'root' in parents and trashed=false"}
     ).GetList()
+
+if not folder_name in [f['title'] for f in file_list]:
+    print("No folder with that name!")
+    sys.exit(0)
+
 for f in file_list:
     if f['title'] == folder_name:
         folder_id = f['id']
         ListFolder(folder_id, save_path, folder)
+
 
 
 # Create compressed archive and delete original directory
@@ -130,3 +146,8 @@ shutil.make_archive(save_path, 'zip', save_path)
 print("Cleaning up. . .")
 shutil.rmtree(save_path)
 print("Done!")
+print("\n")
+print("Files skipped or failed: ")
+
+for ff in failed_files:
+    print(ff)
