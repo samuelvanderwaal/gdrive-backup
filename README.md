@@ -41,7 +41,7 @@ Obtain Google OAuth 2.0 credentials by visting https://console.developers.google
 ## Running
 The first time the program is run it will open a webpage and ask you to sign into your Google account. When you authorize the program's access by signing into an account it will then download the `credentials.txt` file which you should place in the same location as the `config.json` and `client_secrets.txt` files. 
 
-The program can be run manually by `python backup.py` or `systemctl start gdrive-backup.service`.
+The program can be run manually by `python backup.py /path-to-credentials/` or `systemctl start gdrive-backup.service`.
 
 ## Contact
 
